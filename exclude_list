@@ -1,0 +1,11 @@
+*.o
+*.a
+# emacs backups
+*~
+*.aux
+*.log
+*.iso
+# other latex stuff
+*.mtc
+*.toast
+a.out
