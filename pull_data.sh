@@ -1,2 +1,3 @@
 #!/bin/bash
-rsync -avz $1 koalawlan::data $HOME
+OPTIOSN=$1
+rsync -avz $OPTIOSN koalawlan::data $HOME
