@@ -15,10 +15,10 @@ fi
 cd $HOME
 
 # TODO put a filter for the org directory
-FILES="Documents/blogging uni Documents/calzitex org Documents/languages scripts .emacs"
+FILES=$(cat $HOME/scripts/files.txt)
 EXCLUDE="$HOME/scripts/exclude_list"
 
-CMD="rsync -avz $OPTIONS --exclude-from=$HOME/scripts/exclude_list --delete --relative $FILES $SERVER::$SHARE
+CMD="rsync -avz $OPTIONS --exclude-from=$HOME/scripts/exclude_list --delete --relative $FILES $SERVER::$SHARE"
 
 echo "executing $CMD"
 

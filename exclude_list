@@ -6,6 +6,11 @@
 *.log
 *.iso
 # other latex stuff
+*.mtc*
+*.toc
 *.mtc
 *.toast
 a.out
+# emacs recovery files?
+\#*
+.#*
