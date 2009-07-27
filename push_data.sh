@@ -1,15 +1,7 @@
 #!/bin/bash
 
-SERVER="koalawlan"
-SHARE="data"
-OPTIONS=$1
-
-if ! fping -a $SERVER
-then
-    echo "server $SERVER not reachable"
-    exit 1
-fi    
-    
+SERVER=$1
+OPT=$2
 
 # making sure we start from the right directory
 cd $HOME
@@ -18,7 +10,8 @@ cd $HOME
 FILES=$(cat $HOME/scripts/files.txt)
 EXCLUDE="$HOME/scripts/exclude_list"
 
-CMD="rsync -avz $OPTIONS --exclude-from=$HOME/scripts/exclude_list --delete --relative $FILES $SERVER::$SHARE"
+# now it's using ssh (no need of rsync server)
+CMD="rsync -avz $OPT --exclude-from=$HOME/scripts/exclude_list --relative $FILES $SERVER:$SHARE"
 
 echo "executing $CMD"
 
