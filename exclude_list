@@ -21,3 +21,5 @@ a.out
 _*
 # auctex temp
 *.prv
+*.dmg
+*.torrent

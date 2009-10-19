@@ -1,0 +1,1 @@
+Documents/blogging Documents/sport Documents/documenti uni Documents/calzitex org Documents/languages scripts .emacs.d .ssh .emacs.bmk .gitconfig .git .gnupg
