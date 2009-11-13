@@ -1,18 +1,26 @@
 #!/bin/bash
 
 SERVER=$1
-OPT=$2
+OPTS=$2
 
 # making sure we start from the right directory
 cd $HOME
 
 # TODO put a filter for the org directory
-FILES=$(cat $HOME/scripts/files.txt)
-EXCLUDE="$HOME/scripts/exclude_list"
+FILES=$(cat $HOME/bin/files.txt)
+EXCLUDE="$HOME/bin/exclude_list"
 
-# now it's using ssh (no need of rsync server)
-CMD="rsync -avz $OPT --exclude-from=$HOME/scripts/exclude_list --relative $FILES $SERVER:$SHARE"
+OPTS="-avz --relative -e $OPTS"
 
-echo "executing $CMD"
+echo $FILES
+for x in $FILES
+do
+    if test -d $x
+    then OP="--delete-after $OPTS"
+    else OP=$OPTS
+    fi
+    CMD="rsync $OP $x $SERVER:"
+    echo "executing $CMD"
+    $CMD
+done
 
-$CMD
