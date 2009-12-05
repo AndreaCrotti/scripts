@@ -1,3 +1,4 @@
+authorized_keys2
 *.pyc
 .ssh/master*
 *.o
@@ -23,3 +24,4 @@ _*
 *.prv
 *.dmg
 *.torrent
+computer_graphics

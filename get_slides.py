@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # TODO: add exception handling and more
+# TODO: adding some threading with threading or multitas
 
 import re, urllib2, os
 import logging

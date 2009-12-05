@@ -3,6 +3,7 @@
 SERVER=$1
 OPTS=$2
 
+
 # making sure we start from the right directory
 cd $HOME
 
@@ -21,6 +22,6 @@ do
     fi
     CMD="rsync $OP $x $SERVER:"
     echo "executing $CMD"
-    $CMD
+#    $CMD
 done
 
