@@ -4,7 +4,6 @@
 
 import re, urllib2, os
 import logging
-from sys import exit
 
 BAD_ARGS = 1
 DEF_EXTS = ('pdf', 'txt')
@@ -23,33 +22,37 @@ def parse_page(base, ext):
     return links.findall(res)
 
 def download_stuff(down_urls, base, dest = os.getcwd(),
-                   relative = True, enum = True):
+                   relative = True, enum = True, confirm = True):
     " Download all the urls given "
     base = re.match("(.+/).*", base).groups()[0]
     logging.debug("downloading from %s" % base)
 
-    for (i, u) in enumerate(down_urls):
-        # checking if it's an absolute or relative address
-        if not("http" in u):
-            doc = os.path.join(base, u)
+    logging.info("starting to download %s", str(down_urls))
+    if confirm:
+        n = raw_input("are you sure?\n")
+        for (i, u) in enumerate(down_urls):
+            # checking if it's an absolute or relative address
+            if not("http" in u):
+                doc = os.path.join(base, u)
 
-        # absolute url, don't download it if relative set
-        elif relative:
-            continue
+            # absolute url, don't download it if relative set
+            elif relative:
+                continue
 
-        name = u.split("/")[-1]
-        if enum:
-            name = "_".join([str(i), name])
+            name = u.split("/")[-1]
+            if enum:
+                name = "_".join([str(i), name])
 
-        logging.info("fetching %s" % doc)
-        # finally write to file
-        open(os.path.join(dest, name), 'w').write(urllib2.urlopen(doc).read())
+            logging.info("fetching %s" % doc)
+            # finally write to file
+            open(os.path.join(dest, name), 'w').write(urllib2.urlopen(doc).read())
 
 if __name__ == '__main__':
     # check how verbosity works!
     opt_list = [
         make_option("-v", "--verbose", action = "store_true", dest = "verbose"),
         make_option("-d", "--dest", dest = "dest", default = "slides"),
+        make_option("-y", "--noconfirm", action = "store_true", dest="noconfirm"),
         make_option("-e", "--ext", dest = "extensions",
                      default = DEF_EXTS,
                      help = "list of extensions of files to download"),
@@ -79,4 +82,4 @@ if __name__ == '__main__':
 
         urls = parse_page(base_url, options.extensions)
         download_stuff(urls, base_url, dest = options.dest,
-                       relative = options.relative, enum = options.enum)
+                       relative = options.relative, enum = options.enum, confirm = options.noconfirm)
