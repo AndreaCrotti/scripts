@@ -1,0 +1,38 @@
+# File containing the final sync project specifications
+We have one rsync server and N bidirectional connections.
+Those connections have both a push/pull command to get and put the new files
+
+We can also add a generic pre-commit hook for all the project in intersted folders.
+
+Every time we push some modify we also generate a list of modified files (with the ip of the machine who did it)
+
+Whenever we launch a push we write also the list of files that have been modified and by who.
+For example:
+
+192.168.0.2
+file.tex
+other.c
+Documents/file.c
+
+So every push we check that we're not modifying something just modified from another host.
+
+
+
+* Software:
+  - emacs
+    + tramp
+    + emerge
+    + org-mode
+  - rsync
+  - git
+
+    
+* Things to sync:
+  - address book
+  - university stuff
+  - emacs configuration (modes and user-defined functions)
+  - mc configuration (used?)
+  - firefox setups (only for X11 machines)
+  - ssh keys/config
+  - aliases and bash config
+
