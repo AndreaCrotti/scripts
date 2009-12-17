@@ -1,1 +1,15 @@
-Documents/blogging Documents/sport Documents/documenti uni Documents/calzitex org Documents/languages bin .emacs.d .ssh .emacs.bmk .gitconfig .git .gnupg
+Documents/blogging
+Documents/sport
+Documents/documenti
+uni
+Documents/calzitex
+org
+Documents/languages
+bin
+.emacs.d
+.ssh
+.emacs.bmk
+.gitconfig
+.git
+.gnupg
+libs

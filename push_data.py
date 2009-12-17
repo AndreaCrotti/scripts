@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# Time-stamp: <17-12-2009, 15:20>
 
 import os
 #import logging
@@ -8,8 +9,8 @@ from sys import exit
 HOME = os.path.expanduser("~")
 
 RSYNC = "/usr/bin/env rsync"
-# writing which files we want to save
-FILES = ['Documents/blogging', 'Documents/sport', 'Documents/documenti', 'uni', 'Documents/calzitex', 'org', 'Documents/languages', 'bin', '.emacs.d', '.ssh', '.emacs.bmk', '.gitconfig', '.git', '.gnupg', 'libs']
+# TODO: make it more general
+FILES = open('files.txt').read().split('\n')[:-1]
 
 EXCLUDE = os.path.expanduser("~/bin/exclude_list")
 OPTIONS = ["--exclude-from=" + EXCLUDE, "-az", "--relative"]
@@ -17,6 +18,7 @@ OPTIONS = ["--exclude-from=" + EXCLUDE, "-az", "--relative"]
 CMD = RSYNC + " %(opts)s %(src)s %(dst)s"
 
 def sync_files(dst, confirm = False):
+    "Synchronize the file calling rsync with the global OPTIONS"
     os.chdir(HOME)
     dic = {}
     for f in FILES:
