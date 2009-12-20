@@ -6,6 +6,7 @@ Documents/calzitex
 org
 Documents/languages
 bin
+packages
 .emacs.d
 .ssh
 .emacs.bmk

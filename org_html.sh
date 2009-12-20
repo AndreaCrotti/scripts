@@ -11,13 +11,10 @@ then
 else
     echo "converting file $FILE"
     # TODO putting a minimal init file
-    emacs --no-init-file --batch --visit=$FILE --eval \
-	"(progn
-         (add-to-list 'load-path \"~/.emacs.d/org-mode/site-lisp/\")
-         (require 'org)
-         (require 'org-html)
-         (require 'org-macs))" \
-    -f org-export-as-html-batch
+    emacs --batch \
+	--eval "(add-to-list 'load-path \"$HOME/.emacs.d/org-mode/lisp/\")" \
+	--load=$HOME/.emacs.d/org-mode/lisp/org.el \
+	--visit=MyFile --funcall org-export-as-html-batch
 fi
 
 help() {
