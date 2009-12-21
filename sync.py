@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Time-stamp: <18-12-2009, 13:40>
+# Time-stamp: <21-12-2009, 13:55>
 # TODO: put all the single files together in only one sync
 
 import os
@@ -7,10 +7,13 @@ import os
 #import subprocess
 
 from optparse import OptionParser
-from sys import exit, stdout
+from sys import exit
+
+import yaml
 
 HOME = os.path.expanduser("~")
 
+CONF="sync.yaml"
 RSYNC = "/usr/bin/env rsync"
 # TODO: make it more general
 EXCLUDE = os.path.expanduser("~/bin/exclude_list")
@@ -19,6 +22,9 @@ FILES = os.path.expanduser("~/bin/files.txt")
 FILELIST = open(FILES).read().split('\n')[:-1]
 
 CMD = RSYNC + " %(opts)s %(src)s %(dst)s"
+
+def parse_conf():
+    return yaml.load(open(CONF))
 
 def sync_files(dst, options, confirm = True):
     "Synchronize the file calling rsync with the global OPTIONS"

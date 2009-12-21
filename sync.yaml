@@ -2,14 +2,17 @@
 # every set of directory will mean a certain feature
 # and every host can only access to some of them.
 
-programming: 
-  - bin
-  - Documents/languages
-  - libs
+# by default everything is synched
 
-emacs:
-  - .emacs.d
-  - packages
-  
+directories:
+  programming: [bin, Documents/languages, libs]
+  emacs: [.emacs.d, packages]
+  doc: [howto_guide]
 
-  
+profiles:
+  programmer: [emacs, programming, doc]
+  sysadmin: [emacs]
+ 
+hosts:
+  mac: [programmer]
+  calzitex: [calzitex]
