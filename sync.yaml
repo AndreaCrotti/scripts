@@ -1,0 +1,15 @@
+# configuration file for the synchronization
+# every set of directory will mean a certain feature
+# and every host can only access to some of them.
+
+programming: 
+  - bin
+  - Documents/languages
+  - libs
+
+emacs:
+  - .emacs.d
+  - packages
+  
+
+  
