@@ -21,7 +21,7 @@ then
     help
 else
     echo "converting file $FILE"
-    $EMACS   --batch \
+    $EMACS --batch \
 	--eval "(add-to-list 'load-path \"$ORG\")" \
 	--eval "(require 'org)" \
 	--visit=$FILE --funcall org-export-as-latex-batch
