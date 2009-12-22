@@ -1,36 +1,21 @@
 #!/bin/bash
 
-# Pass as input the file you want to convert to html
-
 FILE=$1
-ORG="$HOME/.emacs.d/org-mode/lisp/org.el"
+ORG="$HOME/.emacs.d/org-mode/lisp/"
+EMACS="/Applications/Emacs.app/Contents/MacOS/Emacs"
 
 if ! test -f $FILE
 then
-    echo "file not found"
+    help
 else
     echo "converting file $FILE"
-    # # TODO putting a minimal init file
-    # emacs --batch \
-    # 	--eval "(add-to-list 'load-path \"$HOME/.emacs.d/org-mode/lisp/\")" \
-    # 	--load=$HOME/.emacs.d/org-mode/lisp/org.elc \
-    # 	orglib=$HOME/.emacs.d/org-mode/lisp/
-    orglib=$HOME/.emacs.d/org-mode/lisp/
-    emacs   --batch \
-	--eval "(add-to-list 'load-path \"$HOME/.emacs.d/org-mode/lisp/\")" \
-	--eval "(setq debug-on-error t)" \
+    $EMACS   --batch \
+	--eval "(add-to-list 'load-path \"$ORG\")" \
 	--eval "(require 'org)" \
-	--eval "(require 'org-install)" \
-	--visit=$FILE -f org-export-as-latex-batch
+	--visit=$FILE --funcall org-export-as-latex-batch
 fi
-	#--load=$orglib/org.el \
-
-#orglib=$HOME/.emacs.d/org-mode/lisp/
-# emacs   --batch \
-#     --load=$orglib/org.elc \
-#     --eval "(setq org-export-headline-levels 2)" \
-#     --visit=$1 --funcall org-export-as-latex-batch
 
 help() {
-    echo "pass a file to export"
+    echo "org_html.sh <org_file>"
+    exit 1
 }
