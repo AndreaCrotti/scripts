@@ -4,11 +4,23 @@
 
 # by default everything is synchronized
 
+# those extensions or files names are never synchronized
+filter:
+  latex: [aux, log, toc, mtc]
+  bincode: [pyc, o, a, a.out]
+  isos: [dmg, iso]
+  ssh: [.ssh/master, authorized_keys2]
+  code: [~]
+
+files:
+  .ssh/config
+
 directories:
   programming: [bin, Documents/languages, libs, packages]
   emacs: [.emacs.d]
   doc: [howto_guide]
-  personal: [org, Pictures, Mail]
+  personal: [org]
+  big: [Movies, Pictures, Music]
   calzitex: [Documents/calzitex]
 
 profiles:

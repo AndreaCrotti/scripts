@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+Download stuff from the internet
+"""
 # TODO: add exception handling and more
 # TODO: adding some threading with threading or multitas
 
@@ -21,6 +24,7 @@ def parse_page(base, ext):
     links = re.compile(exp, re.IGNORECASE)
     return links.findall(res)
 
+# FIXME: make it more nice
 def download_stuff(down_urls, base, dest = os.getcwd(),
                    relative = True, enum = True, confirm = True):
     " Download all the urls given "

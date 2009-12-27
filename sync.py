@@ -1,15 +1,21 @@
 #!/usr/bin/env python
-# Time-stamp: <21-12-2009, 13:55>
+# Time-stamp: <25-12-2009, 23:48>
 # TODO: put all the single files together in only one sync
 
 import os
 #import logging
 #import subprocess
+#import smtplib # necessary for sending mails with the errors
 
 from optparse import OptionParser
 from sys import exit
 
-import yaml
+# Yaml is the only one not in default library
+try:
+    import yaml
+except ImportError:
+    print "You need to install PyYaml for reading the configuration"
+    exit(1)
 
 HOME = os.path.expanduser("~")
 
