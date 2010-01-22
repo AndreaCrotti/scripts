@@ -24,3 +24,5 @@ _*
 *.prv
 *.dmg
 *.torrent
+# emacs history must be private never sync
+history

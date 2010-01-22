@@ -3,14 +3,13 @@
 # TODO: using a logger and creating some tests to check correctness
 
 import sys
-# FIXME use urllib for the symbian
-import urllib2
 import socket
 import os
 import pickle
+import urllib2
+    
 from re import search
 from getopt import getopt
-from random import shuffle
 
 VERBOSE = False
 
