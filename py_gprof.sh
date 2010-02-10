@@ -10,13 +10,22 @@ shift
 
 # change those variables as you prefer
 STATS="output.pstats"
-TYPE=png
+TYPE=pdf
 OUT=output.$TYPE
-OPEN="open"
+
+if uname | grep -i 'darwin'
+then
+    OPEN="open"
+    GPROF2DOT="gprof2dot.py"
+elif uname | grep -i 'linux'
+then
+    OPEN="evince"
+    GPROF2DOT="gprof2dot"
+fi
 
 # $@ collect all the arguments for the python script
 # it doens't contain the file name after the shift
 python -m cProfile -o $STATS $FNAME $@
-gprof2dot.py -f pstats $STATS | dot -T$TYPE -o $OUT
+$GPROF2DOT -f pstats $STATS | dot -T$TYPE -o $OUT
 rm $STATS
 $OPEN $OUT
