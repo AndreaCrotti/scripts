@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Time-stamp: <22-01-2010, 15:34>
+# Time-stamp: <22-04-2010, 12:29>
 # TODO: put all the single files together in only one sync
 
 import os
@@ -23,7 +23,7 @@ CONF="sync.yaml"
 RSYNC = "/usr/bin/env rsync"
 # TODO: make it more general
 EXCLUDE = os.path.expanduser("~/bin/exclude_list")
-FILES = os.path.expanduser("~/bin/files.txt")
+FILES = os.path.expanduser("~/bin/simple.txt")
 
 FILELIST = open(FILES).read().split('\n')[:-1]
 

@@ -19,3 +19,4 @@ class Filter(object):
     def procmail_rule(self):
         "Generate procmail rule"
         pass
+    
