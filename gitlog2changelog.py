@@ -1,13 +1,10 @@
 #!/usr/bin/python
 # Copyright 2008 Marcus D. Hanwell <marcus@cryos.org>
 # Distributed under the terms of the GNU General Public License v2 or later
-
 # For example we have something like
 # commit ae6de05351cbc00205b4461757d01be2d7408758
 # Author: Andrea Crotti <andrea.crotti.0@gmail.com>
 # Date:   2010-08-04
-
-#     timing and moe
 
 #  bar.sh        |   41 +++++++++++++++++++++++++++++++++++++++++
 #  c_gprof.sh    |    7 ++-----
