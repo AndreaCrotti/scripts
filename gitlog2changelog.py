@@ -34,7 +34,10 @@
 #  create mode 100755 git_interactive.sh
 #  create mode 100755 testmerge.sh
 
-import string, re, os, sys
+import string
+import re
+import sys
+import os
 import subprocess
 
 def gitlog_to_changelog(output):
