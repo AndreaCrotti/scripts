@@ -9,5 +9,3 @@ colorize = lambda col, s: control(col) + s + control("0")
 
 def next_color(color):
     return COLORS[(COLORS.index(color) + 1) % len(COLORS)]
-
-

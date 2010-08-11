@@ -6,39 +6,49 @@ Creates a nice timer, using nice colors and splitting the screen accordingly
 import time
 import sys
 import os
-import getopt
+
+COLORS = map(str, range(31,38))
+RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = COLORS
+
+control = lambda col: "\033[0;" + col + "m"
+colorize = lambda col, s: control(col) + s + control("0")
+
+
+def next_color(color):
+    return COLORS[(COLORS.index(color) + 1) % len(COLORS)]
 
 # works on linux and osx
-# TODO: add a warning for it 
 rows, columns = map(int, os.popen('stty size', 'r').read().split())
 
-# TODO: use colors also if possible
 os.system("clear")
  
+if len(sys.argv) < 2:
+    print "usage: %s <time1> <time2> <time3> ..."
+
 intervals = map(int, sys.argv[1:])
-# print "intervals = %s" % str(intervals)
 tot = sum(intervals)
+# computing the subtototals
+subtots = [sum(intervals[:i+1]) for i in range(len(intervals))]
 
 # delay of the function
 delay = float(tot) / rows
 
-for x in range(rows):
-    print " *** "
+def print_string(color):
+    print colorize(color, "*" * columns)
+
+col = GREEN
+tot_time = 0
+pos = 0
+
+while True:
+    if pos == len(subtots):
+        break
+
+    print_string(col)
     time.sleep(delay)
+    tot_time += delay
 
-# def makerepeater(delay, fun, *a, **k):
-#     def wrapper(*a, **k):
-#         while True:
-#             fun(*a, **k)
-#             time.sleep(delay)
-#     return wrapp
-
-
-#define CONTROL(color) "\033[0;"color"m"
-#define RED "31"
-#define GREEN "32"
-#define YELLOW "33"
-#define BLUE "34"
-#define MAGENTA "35"
-#define CYAN "36"
-#define WHITE "37"
+    if tot_time >= subtots[pos]:
+        col = next_color(col)
+        pos += 1
+    
