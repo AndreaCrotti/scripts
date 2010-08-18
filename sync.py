@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Time-stamp: <18-08-2010, 22:31>
+# Time-stamp: <18-08-2010, 23:46>
 # TODO: put all the single files together in only one sync
 
 import os
@@ -13,50 +13,46 @@ from sys import exit
 HOME = os.path.expanduser("~")
 
 RSYNC = "/usr/bin/env rsync"
+GIT = "/usr/bin/env git"
+# FIXME: those globals are really bad
 EXCLUDE = os.path.expanduser("~/bin/exclude_list")
-FILES = os.path.expanduser("~/bin/simple.txt")
+RSYNC_OPTIONS = " --exclude-from=" + EXCLUDE + " -az --relative"
+FILES = os.path.expanduser("~/bin/files.txt")
 
-FILELIST = open(FILES).read().split('\n')[:-1]
+# only pretending for now
+RSYNC_CMD = RSYNC + RSYNC_OPTIONS + "  %s %s"
+GIT_CMD = "cd %s && " + GIT + " push -n %s master"
+DST = "%s:%s"
 
-CMD = RSYNC + " %(opts)s %(src)s %(dst)s"
 
-def sync_files(dst, options, confirm=True):
-    "Synchronize the file calling rsync with the global OPTIONS"
+def sync_files(host):
+    "Synchronizes files to destination"
     os.chdir(HOME)
-    dic = {}
-    for f in FILELIST:
-        dic[f] = []
-        if os.path.isdir(f):
-            dic[f].append("--delete-after")
+    for f in open(FILES):
+        if "#" in f:
+            continue
+        dst = DST % (host, f)
+        if os.path.exists(os.path.join(f, ".git")):
+            # then is a git repository!
+            cmd = GIT_CMD % (f, dst)
+        else:
+            cmd = RSYNC_CMD % (f, dst)
 
-    for d in dic.iterkeys():
-        cmd = CMD % {'opts' : ' '.join(options + dic[d]),
-                     'src' : d, 'dst' : dst + ":"}
-        sync = True
-        if confirm:
-            r = raw_input("executing %s, confirm? y/n\n" % cmd)
-            if r != 'y':
-                sync = False
-                print "skipping %s from sync" % d
-
-        if sync:
-            print "running command %s" % cmd
-        # by default is already going to stdout
+        print "running command %s" % cmd
         _, out = os.popen2(cmd)
         print out.read()
 
-
 if __name__ == '__main__':
-    # FIXME: not really nice use of global
+    # TODO: make it looks nicer 
     opt_parser = OptionParser(usage = "push_data.py -o <additional options> [-p] user@host")
     opt_parser.add_option("-v", "--verbose", action = "store_true", dest = "verbose")
     opt_parser.add_option("-p", "--pretend", action = "store_true", dest = "pretend",
                           help = "just pretend don't do")
-    opt_parser.add_option("-y", "--no-confirm", action = "store_false",
-                          dest = "confirm", help = "don't demand confirmation")
+
     (opts, args) = opt_parser.parse_args()
 
     options = ["--exclude-from=" + EXCLUDE, "-az", "--relative"]
+
 
     if opts.pretend:
         options.append("-n")
@@ -72,5 +68,5 @@ if __name__ == '__main__':
     # this can also send on more hosts at the same time!
     # maybe should be better if running in parallel?
     for host in args:
-        sync_files(host, options, confirm = opts.confirm)
+        sync_files(host)
     
