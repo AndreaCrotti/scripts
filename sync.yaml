@@ -12,9 +12,6 @@ filter:
   ssh: [.ssh/master, authorized_keys2]
   code: [~]
 
-files:
-  .ssh/config
-
 directories:
   programming: [bin, Documents/languages, libs, packages]
   emacs: [.emacs.d]

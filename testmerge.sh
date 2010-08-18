@@ -1,14 +1,18 @@
 #!/bin/bash
+DIR=test_merge
+rm -rf $DIR
+mkdir $DIR
+cd $DIR
 git init
-echo Hello World! > hello.txt
-git add hello.txt
+echo "#include <stdio.h>" > hello.c
+git add -f hello.c
 git commit -m "Initial commit"
 git checkout -b helloGit
-echo Hello Git! > hello.txt
-git add hello.txt
+echo "#include <stdlib.h>" > hello.c
+git add -f hello.c
 git commit -m "Update from helloGit branch"
 git checkout master
-echo Hello World! Hello indeed! > hello.txt
-git add hello.txt
+echo "#include <string.h>" > hello.c
+git add -f hello.c
 git commit -m "Update from master"
 git merge helloGit

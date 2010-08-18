@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Time-stamp: <22-04-2010, 12:29>
+# Time-stamp: <18-08-2010, 22:31>
 # TODO: put all the single files together in only one sync
 
 import os
@@ -10,18 +10,9 @@ import os
 from optparse import OptionParser
 from sys import exit
 
-# Yaml is the only one not in default library
-try:
-    import yaml
-except ImportError:
-    print "You need to install PyYaml for reading the configuration"
-    exit(1)
-
 HOME = os.path.expanduser("~")
 
-CONF="sync.yaml"
 RSYNC = "/usr/bin/env rsync"
-# TODO: make it more general
 EXCLUDE = os.path.expanduser("~/bin/exclude_list")
 FILES = os.path.expanduser("~/bin/simple.txt")
 
@@ -29,10 +20,7 @@ FILELIST = open(FILES).read().split('\n')[:-1]
 
 CMD = RSYNC + " %(opts)s %(src)s %(dst)s"
 
-def parse_conf():
-    return yaml.load(open(CONF))
-
-def sync_files(dst, options, confirm = True):
+def sync_files(dst, options, confirm=True):
     "Synchronize the file calling rsync with the global OPTIONS"
     os.chdir(HOME)
     dic = {}
@@ -40,6 +28,7 @@ def sync_files(dst, options, confirm = True):
         dic[f] = []
         if os.path.isdir(f):
             dic[f].append("--delete-after")
+
     for d in dic.iterkeys():
         cmd = CMD % {'opts' : ' '.join(options + dic[d]),
                      'src' : d, 'dst' : dst + ":"}
@@ -53,9 +42,9 @@ def sync_files(dst, options, confirm = True):
         if sync:
             print "running command %s" % cmd
         # by default is already going to stdout
-        # TODO: make it possible to log somewhere the stderr
         _, out = os.popen2(cmd)
         print out.read()
+
 
 if __name__ == '__main__':
     # FIXME: not really nice use of global

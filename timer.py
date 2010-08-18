@@ -6,6 +6,8 @@ Creates a nice timer, using nice colors and splitting the screen accordingly
 import time
 import sys
 import os
+import random
+import string
 
 COLORS = map(str, range(31,38))
 RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = COLORS
@@ -24,6 +26,7 @@ os.system("clear")
  
 if len(sys.argv) < 2:
     print "usage: %s <time1> <time2> <time3> ..."
+    sys.exit(os.EX_USAGE)
 
 intervals = map(int, sys.argv[1:])
 tot = sum(intervals)
@@ -34,7 +37,8 @@ subtots = [sum(intervals[:i+1]) for i in range(len(intervals))]
 delay = float(tot) / rows
 
 def print_string(color):
-    print colorize(color, "*" * columns)
+    st = "".join([random.choice(string.ascii_letters) for _ in range(columns)])
+    print colorize(color, st)
 
 col = GREEN
 tot_time = 0
