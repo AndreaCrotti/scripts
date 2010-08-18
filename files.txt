@@ -1,12 +1,11 @@
-#Documents/pycon
-Documents/trips/sardegna
+Documents/pycon
 Documents/sport
-# Documents/documenti
-# Documents/trips
-# Documents/calzitex
-# Documents/languages
-# uni
-# org
-# bin
-# bash_conf
-# howto_guide
+Documents/documenti
+Documents/trips
+Documents/calzitex
+Documents/languages
+uni
+org
+bin
+bash_conf
+howto_guide

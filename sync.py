@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-# Time-stamp: <18-08-2010, 23:46>
+# Time-stamp: <19-08-2010, 01:08>
 # TODO: put all the single files together in only one sync
+# TODO: fix the ssh keys problem with mini
+# TODO: make it recursively analyzing if there are .git directories inside it 
 
-import os
+import os, sys
 #import logging
-#import subprocess
-#import smtplib # necessary for sending mails with the errors
+import subprocess
 
 from optparse import OptionParser
 from sys import exit
@@ -16,31 +17,31 @@ RSYNC = "/usr/bin/env rsync"
 GIT = "/usr/bin/env git"
 # FIXME: those globals are really bad
 EXCLUDE = os.path.expanduser("~/bin/exclude_list")
-RSYNC_OPTIONS = " --exclude-from=" + EXCLUDE + " -az --relative"
+RSYNC_OPTIONS = " --exclude-from=" + EXCLUDE + " -azv --relative"
 FILES = os.path.expanduser("~/bin/files.txt")
 
 # only pretending for now
-RSYNC_CMD = RSYNC + RSYNC_OPTIONS + "  %s %s"
+RSYNC_CMD = RSYNC + RSYNC_OPTIONS + " -n  %s %s"
 GIT_CMD = "cd %s && " + GIT + " push -n %s master"
-DST = "%s:%s"
-
 
 def sync_files(host):
     "Synchronizes files to destination"
     os.chdir(HOME)
     for f in open(FILES):
+        # TODO: use a more general way to parse and strip 
         if "#" in f:
             continue
-        dst = DST % (host, f)
+        f = f.strip()
         if os.path.exists(os.path.join(f, ".git")):
             # then is a git repository!
-            cmd = GIT_CMD % (f, dst)
+            cmd = GIT_CMD % (f, "%s:%s" % (host, f))
         else:
-            cmd = RSYNC_CMD % (f, dst)
+            cmd = RSYNC_CMD % (f, "%s:" % host)
 
         print "running command %s" % cmd
-        _, out = os.popen2(cmd)
-        print out.read()
+        # FIXME: this is really a bad idea
+        os.system(cmd)
+        # subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
 
 if __name__ == '__main__':
     # TODO: make it looks nicer 
