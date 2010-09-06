@@ -1,9 +1,17 @@
 #!/usr/bin/env python
+<<<<<<< HEAD
 # Time-stamp: <19-08-2010, 01:14>
 # TODO: put all the single files together in only one sync
 # TODO: fix the ssh keys problem with mini
 # TODO: make it recursively analyzing if there are .git directories inside it
 # TODO: the push automatically done doesn't really work automatically
+=======
+# Time-stamp: <19-08-2010, 14:45>
+# TODO: put all the single files together in only one sync
+# TODO: fix the ssh keys problem with mini
+# TODO: make it recursively analyzing if there are .git directories inside it
+# TODO: pushing to a normal git repo doesn't work, or pull from it via ssh or create some bare repos
+>>>>>>> c26d9a74816b04008f6a46897a5e107048c33dd0
 
 import os, sys
 #import logging
