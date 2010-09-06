@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-# Time-stamp: <19-08-2010, 01:08>
+# Time-stamp: <19-08-2010, 01:14>
 # TODO: put all the single files together in only one sync
 # TODO: fix the ssh keys problem with mini
-# TODO: make it recursively analyzing if there are .git directories inside it 
+# TODO: make it recursively analyzing if there are .git directories inside it
+# TODO: the push automatically done doesn't really work automatically
 
 import os, sys
 #import logging
@@ -21,7 +22,7 @@ RSYNC_OPTIONS = " --exclude-from=" + EXCLUDE + " -azv --relative"
 FILES = os.path.expanduser("~/bin/files.txt")
 
 # only pretending for now
-RSYNC_CMD = RSYNC + RSYNC_OPTIONS + " -n  %s %s"
+RSYNC_CMD = RSYNC + RSYNC_OPTIONS + " %s %s"
 GIT_CMD = "cd %s && " + GIT + " push -n %s master"
 
 def sync_files(host):
@@ -35,6 +36,8 @@ def sync_files(host):
         if os.path.exists(os.path.join(f, ".git")):
             # then is a git repository!
             cmd = GIT_CMD % (f, "%s:%s" % (host, f))
+            # FIXME: not working yet
+            continue
         else:
             cmd = RSYNC_CMD % (f, "%s:" % host)
 
