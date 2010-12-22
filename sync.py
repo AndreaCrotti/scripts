@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# Time-stamp: <06-09-2010, 17:10>
 # TODO: put all the single files together in only one sync
 # TODO: fix the ssh keys problem with mini
 # TODO: make it recursively analyzing if there are .git directories inside it
@@ -73,4 +72,3 @@ if __name__ == '__main__':
     # maybe should be better if running in parallel?
     for host in args:
         sync_files(host)
-    
