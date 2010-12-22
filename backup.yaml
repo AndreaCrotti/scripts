@@ -1,0 +1,57 @@
+destinations:
+  backup:
+    type: disk
+    path: /Volumes/backup
+  
+  mini:
+    type: ssh
+    path: mini
+    
+sources:
+  - Documents/pycon
+  - Documents/sport
+  - Documents/documenti
+  - Documents/trips
+  - Documents/calzitex
+  - Documents/languages
+  - uni:
+      aachen/thesis/pad_mobility: git
+      aachen/thesis/inet: git
+  - .:
+      org: git
+      bin: git
+      bash_conf: git
+  
+  - bash_conf
+  - howto_guide
+  - Library/Application\ Support
+
+exclude_regexp:
+  - authorized_keys2
+  - *.pyc
+  - .ssh/master*
+  - *.o
+  - *.a
+  - # emacs backups
+  - *~
+  - *.aux
+  - *.log
+  - *.iso
+  - # other latex stuff
+  - *.mtc*
+  - *.toc
+  - *.mtc
+  - *.toast
+  - a.out
+  - # emacs recovery files?
+  - \#*
+  - .#*
+  - .emacs.desktop*
+  - # more hidden files
+  - _*
+  - # latex temp
+  - *.prv
+  - *.dmg
+  - *.torrent
+  - # emacs history must be private never sync
+  - history
