@@ -35,22 +35,21 @@ class ShellCommand(object):
     def __setattribute__(self, attr, value):
         self.cmd.append((attr, value))
 
-    def __add__(self, attr):
+    def add(self, attr):
         self.cmd.append(attr)
 
-    def execute(self):
+    def execute(self, dest):
         # this is good for both commands
-        chdir(self.base)
+        chdir(dest)
+        subprocess.Popen(str(self), shell=True)
     
 
 class RdiffCommand(ShellCommand):
     " Rdiff commands"
-    def __init__(self, verbose=False, base=HOME):
+    def __init__(self, base=HOME):
         # a command is a list of options, arguments etc etc
         super(RdiffCommand, self).__init__(base)
         self.cmd.append(CMD % "rdiff-backup")
-        if verbose:
-            self.cmd.append("-v")
 
     def exclude_list(self, exts):
         return '|'.join([x + '$' for x in exts])
@@ -59,7 +58,7 @@ class RdiffCommand(ShellCommand):
 class GitCommand(ShellCommand):
     def __init__(self, base=HOME):
         super(GitCommand, self).__init__(base)
-        self.cmd.append("git clone")
+        self.cmd.append(CMD % "git clone")
 
 
 def backup(dest):
@@ -74,19 +73,21 @@ def backup(dest):
             for subdir, repo in s[subkey].items():
                 if repo == 'git':
                     gt = GitCommand()
-                    gt += path.join(subkey, subdir)
+                    gt.add(path.join(HOME, subkey, subdir))
 
                     commands.append(gt)
 
-        elif isinstance(s, str):
-            # pass the right verbosity flags and so on
-            rd = RdiffCommand()
-            # depending on the type of connection we should do different things
-            # rd += 
-            # now add the right arguments
-            commands.append(rd)
+        # elif isinstance(s, str):
+        #     # pass the right verbosity flags and so on
+        #     rd = RdiffCommand()
+        #     # depending on the type of connection we should do different things
+        #     # rd += 
+        #     # now add the right arguments
+        #     commands.append(rd)
 
     print map(str, commands)
+    for cmd in commands:
+        cmd.execute(conf['destinations'][dest]['path'])
 
 
 if __name__ == '__main__':
@@ -103,9 +104,5 @@ if __name__ == '__main__':
 
     # assert(destination is not None)
 
-    print conf
-    rs = RdiffCommand()
-    print rs.exclude_list(conf['exclude_ext'])
-    print rs
-    backup('backup')
+    backup('test')
     

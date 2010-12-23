@@ -21,10 +21,11 @@ sources:
   - uni:
       aachen/thesis/pad_mobility: git
       aachen/thesis/inet: git
-  - .:
-      org: git
-      bin: git
-      bash_conf: git
+# $HOME/./org is weird but perfectly legal      
+  # - .:
+  #     org: git
+  #     bin: git
+  #     bash_conf: git
   
   - bash_conf
   - howto_guide
