@@ -51,20 +51,51 @@ class RdiffCommand(ShellCommand):
     def __add__(self, attr):
         self.cmd.append(attr)
 
+    def exclude_list(self, exts):
+        return '|'.join([x + '$' for x in exts])
+
+
 class GitCommand(ShellCommand):
     def __init__(self, verbose=False, base=HOME):
         self.cmd.append("git clone")
         if self.verbose:
             self.cmd.append("-v")
 
+
+
+def backup(dest):
+    # keep a list to make them run in parallel as much as possible
+    commands = []
+    # read the configuration how to do it
+    for s in sources:
+        if isinstance(s, dict):
+            # then look inside the list
+            for subdir, repo in s.items():
+                pass
+
+        elif isinstance(s, str):
+            # pass the right verbosity flags and so on
+            rd = RdiffCommand()
+            # now add the right arguments
+            commands.append(rd)
+
+
 if __name__ == '__main__':
-    opts, args = getopt('v', argv[1:])
+    opts, args = getopt('vd:', argv[1:])
     glob_verbose = False
+
+    destination = None
+
     for o, a in opts:
         if '-v' in o:
             glob_verbose = True
+        if '-d' in o:
+            destination = a
+
+    # assert(destination is not None)
 
     print conf
     rs = RdiffCommand()
+    print rs.exclude_list(conf['exclude_ext'])
     print rs
     

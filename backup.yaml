@@ -6,6 +6,10 @@ destinations:
   mini:
     type: ssh
     path: mini
+
+  test:
+    type: disk
+    path: /Users/andrea/test_backup
     
 sources:
   - Documents/pycon
@@ -30,7 +34,6 @@ exclude_ext:
   - pyc
   - o
   - a
-  - ~
   - aux
   - log
   - iso
