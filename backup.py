@@ -32,7 +32,14 @@ class ShellCommand(object):
     def __str__(self):
         return " ".join(self.cmd)
 
+    def __setattribute__(self, attr, value):
+        self.cmd.append((attr, value))
+
+    def __add__(self, attr):
+        self.cmd.append(attr)
+
     def execute(self):
+        # this is good for both commands
         chdir(self.base)
     
 
@@ -45,39 +52,41 @@ class RdiffCommand(ShellCommand):
         if verbose:
             self.cmd.append("-v")
 
-    def __setattribute__(self, attr, value):
-        self.cmd.append((attr, value))
-
-    def __add__(self, attr):
-        self.cmd.append(attr)
-
     def exclude_list(self, exts):
         return '|'.join([x + '$' for x in exts])
 
 
 class GitCommand(ShellCommand):
-    def __init__(self, verbose=False, base=HOME):
+    def __init__(self, base=HOME):
+        super(GitCommand, self).__init__(base)
         self.cmd.append("git clone")
-        if self.verbose:
-            self.cmd.append("-v")
-
 
 
 def backup(dest):
     # keep a list to make them run in parallel as much as possible
     commands = []
     # read the configuration how to do it
-    for s in sources:
+    for s in conf['sources']:
         if isinstance(s, dict):
-            # then look inside the list
-            for subdir, repo in s.items():
-                pass
+            # then look inside the list, must also add those items
+            # to the exclude list for the corresponding
+            subkey = s.keys()[0]
+            for subdir, repo in s[subkey].items():
+                if repo == 'git':
+                    gt = GitCommand()
+                    gt += path.join(subkey, subdir)
+
+                    commands.append(gt)
 
         elif isinstance(s, str):
             # pass the right verbosity flags and so on
             rd = RdiffCommand()
+            # depending on the type of connection we should do different things
+            # rd += 
             # now add the right arguments
             commands.append(rd)
+
+    print map(str, commands)
 
 
 if __name__ == '__main__':
@@ -98,4 +107,5 @@ if __name__ == '__main__':
     rs = RdiffCommand()
     print rs.exclude_list(conf['exclude_ext'])
     print rs
+    backup('backup')
     
