@@ -38,11 +38,10 @@ class ShellCommand(object):
     def add(self, attr):
         self.cmd.append(attr)
 
-    def execute(self, dest):
-        # this is good for both commands
-        chdir(dest)
+    def execute(self):
+        # TODO: check the return code and parallelize when possible 
         subprocess.Popen(str(self), shell=True)
-    
+
 
 class RdiffCommand(ShellCommand):
     " Rdiff commands"
@@ -56,9 +55,21 @@ class RdiffCommand(ShellCommand):
 
 
 class GitCommand(ShellCommand):
-    def __init__(self, base=HOME):
+    def __init__(self, base=HOME, repo=None):
         super(GitCommand, self).__init__(base)
-        self.cmd.append(CMD % "git clone")
+        # if the destination file already exists we should use git pull instead, much faster
+        self.repo = repo.split("/")[-1]
+
+    def execute(self, dest):
+        from os import listdir, getcwd
+        chdir(dest)
+        if path.exists(self.repo):
+            chdir(self.repo)
+            self.add(CMD % "git pull")
+        else:
+            self.add(CMD % ("git clone %s" % self.repo))
+
+        super(GitCommand, self).execute()
 
 
 def backup(dest):
@@ -72,9 +83,7 @@ def backup(dest):
             subkey = s.keys()[0]
             for subdir, repo in s[subkey].items():
                 if repo == 'git':
-                    gt = GitCommand()
-                    gt.add(path.join(HOME, subkey, subdir))
-
+                    gt = GitCommand(repo=subdir)
                     commands.append(gt)
 
         # elif isinstance(s, str):
@@ -85,8 +94,8 @@ def backup(dest):
         #     # now add the right arguments
         #     commands.append(rd)
 
-    print map(str, commands)
     for cmd in commands:
+        # print cmd
         cmd.execute(conf['destinations'][dest]['path'])
 
 
