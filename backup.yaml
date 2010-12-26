@@ -1,7 +1,7 @@
 destinations:
   backup:
     type: disk
-    path: /Volumes/backup
+    path: /Volumes/backup/data
   
   mini:
     type: ssh
@@ -12,12 +12,12 @@ destinations:
     path: /Users/andrea/test_backup
     
 sources:
-  - Documents/pycon
   - Documents/sport
   - Documents/documenti
-  - Documents/trips
-  - Documents/calzitex
-  - Documents/languages
+  # - Documents/pycon
+  # - Documents/trips
+  # - Documents/calzitex
+  # - Documents/languages
   - uni:
       aachen/thesis/pad_mobility: git
       aachen/thesis/inet: git
@@ -27,9 +27,9 @@ sources:
   #     bin: git
   #     bash_conf: git
   
-  - bash_conf
-  - howto_guide
-  - Library/Application\ Support
+  # - bash_conf
+  # - howto_guide
+  # - Library/Application\ Support
 
 exclude_ext:
   - pyc
