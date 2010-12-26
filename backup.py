@@ -74,13 +74,14 @@ class GitCommand(ShellCommand):
         super(GitCommand, self).__init__(base)
         # if the destination file already exists we should use git pull instead, much faster
         # TODO: the repo name should be passed like this from the external call 
-        self.repo = repo.split("/")[-1]
+        self.repo = repo
+        self.repo_name = self.repo.split("/")[-1]
 
     def execute(self, dest):
         # TODO: use context manager for this context changes 
         chdir(dest)
-        if path.exists(self.repo):
-            chdir(self.repo)
+        if path.exists(self.repo_name):
+            chdir(self.repo_name)
             self.add(CMD % "git pull")
         else:
             self.add(CMD % ("git clone %s" % self.repo))
@@ -100,7 +101,8 @@ def backup(dest):
             subkey = s.keys()[0]
             for subdir, repo in s[subkey].items():
                 if repo == 'git':
-                    gt = GitCommand(subdir)
+                    # creating the full path
+                    gt = GitCommand(path.join(HOME, subkey, subdir))
                     commands.append(gt)
 
         elif isinstance(s, str):
