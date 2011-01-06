@@ -14,7 +14,7 @@ TODO:
 
 import yaml
 import subprocess # for the call process
-from os import path, chdir
+from os import path, chdir, getcwd
 from getopt import getopt
 from sys import argv
 
@@ -52,6 +52,7 @@ class RdiffCommand(ShellCommand):
         # a command is a list of options, arguments etc etc
         super(RdiffCommand, self).__init__(base)
         self.add(CMD % "rdiff-backup")
+        self.add("-v3")
         if opts is not None:
             self.add(opts)
 
@@ -104,6 +105,8 @@ def backup(dest):
                     # creating the full path
                     gt = GitCommand(path.join(HOME, subkey, subdir))
                     commands.append(gt)
+                    opts += " --exclude"
+                    # rd = RdiffCommand(subke
 
         elif isinstance(s, str):
             rd = RdiffCommand(s, opts=glob_exclude)

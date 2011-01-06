@@ -14,22 +14,21 @@ destinations:
 sources:
   - Documents/sport
   - Documents/documenti
-  # - Documents/pycon
-  # - Documents/trips
-  # - Documents/calzitex
-  # - Documents/languages
+  - Documents/pycon
+  - Documents/trips
+  - Documents/calzitex
+  - Documents/languages
   - uni:
       aachen/thesis/pad_mobility: git
       aachen/thesis/inet: git
-# $HOME/./org is weird but perfectly legal      
-  # - .:
-  #     org: git
-  #     bin: git
-  #     bash_conf: git
-  
-  # - bash_conf
+#$HOME/./org is weird but perfectly legal      
+  - .:
+      org: git
+      bin: git
+      bash_conf: git
+
   # - howto_guide
-  # - Library/Application\ Support
+  - Library/Application\ Support
 
 exclude_ext:
   - pyc
