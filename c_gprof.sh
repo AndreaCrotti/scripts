@@ -1,10 +1,17 @@
 #!/bin/bash
 # change those variables as you prefer
+
+if [ $# -lt 2 ]
+then 
+    echo "usage $0 <program> [arguments...]"
+    exit 1
+fi
+
 PROG=$1
 PROF="gmon.out"
 TYPE=pdf
 OUT=profiled.$TYPE
-
+   
 if uname | grep -i 'darwin'
 then
     GPROF2DOT="gprof2dot.py"
