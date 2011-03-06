@@ -23,5 +23,8 @@ org_contact_template = """* %s
 
 for line in out.splitlines():
     s = line.split(';')
-    if s[2]:
-        print org_contact_template % (' '.join((s[0], s[1])), s[2])
+    for x in range(2, 5):
+        if s[x]:
+            mail_pref = FMT[x][0].split(' ')[0]
+            name = ' '.join((s[0], s[1], mail_pref))
+            print org_contact_template % (name, s[x])
