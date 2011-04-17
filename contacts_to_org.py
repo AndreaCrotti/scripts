@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import subprocess
-import os
 
 FMT = [("first name", "fn"),
        ("last name", "ln"),
