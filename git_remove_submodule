@@ -1,14 +1,48 @@
 #!/usr/bin/env python
 
-from sys import argv
-from configobj import ConfigObj
+"""
+Remove completely a git submodule, removing it from
+- .gitmodules
+- .git/config
+- the index
 
-# add always some kind of documentation and check on the input
+But leaving the files still there
+"""
 
-# git config --remove-section submodule.$SUBMOD
-# git rm --cached $SUBMOD
-# echo "now remove the file from .gitmodules"
+# TODO: add nicer logging
+# TODO: make it more customizable
 
+from sys import argv, exit
+import subprocess
+import re
+
+def remove_git_modules(module, input='.gitmodules', output='.gitmodules'):
+    result = []
+
+    with open(input) as open_file:
+        for line in open_file:
+            if line.strip() == ('[submodule "%s"]' % module):
+                open_file.next(); open_file.next()
+            else:
+                result.append(line)
+
+    open(output, 'w').write(''.join(result))
+
+
+def remove_git_config(module):
+    subprocess.Popen("git config --remove-section submodule.%s" % module, shell=True)
+    subprocess.Popen("git rm --cached %s" % module, shell=True)
+
+
+if __name__ == '__main__':
+    if len(argv) != 2:
+        print("usage: %s submodule" % argv[0])
+        exit(1)
+    else:
+        module = argv[1]
+        remove_git_modules(module)
+        remove_git_config(module)
+    
 # Local Variables:
 # mode: python
 # End:
