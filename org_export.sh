@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# TODO: use org projects instead if possible
 EMACS="emacs -Q"
 
 usage () {

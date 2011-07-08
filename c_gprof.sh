@@ -1,8 +1,10 @@
 #!/bin/bash
 
+# make sure that you have compiled the program with profiling flage
+# (-pg for gcc) and that you have gprof2dot in your path
+#
 # TODO: add some trapping mechanism to catch errors
 
-PROG=$1
 PROF="gmon.out"
 TYPE=pdf
 OUT=profiled.$TYPE
@@ -13,6 +15,7 @@ then
     exit 1
 fi
 
+PROG=$1
    
 if uname | grep -i 'darwin'
 then
@@ -23,4 +26,4 @@ fi
 
 ./$@
 gprof $PROG | $GPROF2DOT -e0 -n0 | dot -T$TYPE -o $OUT
-echo "graph in $OUT"
+echo "Result graph is in $OUT"
