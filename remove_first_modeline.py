@@ -1,5 +1,5 @@
 #!/usr/bin/env python2
-from os import path, exists
+from os import path
 from sys import argv, exit
 import logging
 
@@ -11,15 +11,20 @@ if len(argv) < 2:
 
 top_dir = argv[1]
 
-def remove_comment(arg, dirnames, fnames):
+
+def remove_comment(arg, dirname, fnames):
     # we can do some smart filtering based on the extension
     def rewrite_if_matching(fname):
-        # TODO: check lazily that the file is actually changed with the timestamp
-        # or more simpler just use a find to get the number of the line also
-        filtered = (l for l in file(fname) if l != TO_REMOVE)
-        file(fname, 'w').writelines(filtered)
+        lines = open(fname).readlines()
 
-        # return number of line and 
+        if lines and TO_REMOVE == lines[0].strip():
+            print("removing from %s" % fname)
+            file(fname, 'w').writelines(lines[1:])
 
     for f in fnames:
-        pass
+        full = path.join(dirname, f)
+        #  FIXME: why do I need to check if it's a file
+        if path.isfile(full):
+            rewrite_if_matching(full)
+
+path.walk(top_dir, remove_comment, None)
