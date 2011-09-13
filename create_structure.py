@@ -2,11 +2,12 @@
 
 # TODO: one idea would be to represent the whole structure in a Graph
 # and use a function to generate the whole graph, with the right
-# substitutions
+# substitutions, use distutils.dirutils for example
 
 from sys import argv, exit
 from os import path, mkdir, chdir
 from shutil import copy
+from distutils.dir_util import create_tree
 
 # TODO: finish the drawing using artist-mode in case
 # creates the directory structure necessary
@@ -42,16 +43,16 @@ def make_dir_safe(path):
         assert(path.isdir(path))
 
 
-make_dir_safe(NAME)
-chdir(NAME)
+# make_dir_safe(NAME)
+# chdir(NAME)
 
-# TODO: uncamelize the name if possible
-SUBDIR = "airbus.%s" % NAME
-make_dir_safe(SUBDIR)
+# # TODO: uncamelize the name if possible
+# SUBDIR = "airbus.%s" % NAME
+# make_dir_safe(SUBDIR)
 
-# where should it fetch the
-for set_file in SETUPS:
-    copy(set_file, SUBDIR)
+# # where should it fetch the
+# for set_file in SETUPS:
+#     copy(set_file, SUBDIR)
     
 
-chdir(SUBDIR)
+# chdir(SUBDIR)
