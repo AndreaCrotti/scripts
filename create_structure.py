@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 
+# TODO: one idea would be to represent the whole structure in a Graph
+# and use a function to generate the whole graph, with the right
+# substitutions
+
 from sys import argv, exit
 from os import path, mkdir, chdir
 from shutil import copy
 
+# TODO: finish the drawing using artist-mode in case
 # creates the directory structure necessary
 # Proj
 # |_ airbus.proj
@@ -26,7 +31,8 @@ if len(argv) < 2:
     usage()
 
 NAME = argv[1]
-SETUPS = [path.join("templates", "setup." % x) for x in ("cfg", "py")]
+TEMPLATE_DIR = "templates" # this might be SVN or any remote location
+SETUPS = [path.join(TEMPLATE_DIR, "setup." % x) for x in ("cfg", "py")]
 
 def make_dir_safe(path):
     # TODO: also check that there isn't already a directory
@@ -34,6 +40,7 @@ def make_dir_safe(path):
         mkdir(path)
     else:
         assert(path.isdir(path))
+
 
 make_dir_safe(NAME)
 chdir(NAME)
@@ -48,4 +55,3 @@ for set_file in SETUPS:
     
 
 chdir(SUBDIR)
-
