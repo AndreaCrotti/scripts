@@ -3,7 +3,8 @@ from os import path
 from sys import argv, exit
 import logging
 
-TO_REMOVE="# -*-mode: python; py-indent-offset: 4; tab-width: 8; coding: iso-8859-1-unix -*-"
+# TO_REMOVE="# -*-mode: python; py-indent-offset: 4; tab-width: 8; coding: iso-8859-1-unix -*-"
+TO_REMOVE = "# -*-"
 
 if len(argv) < 2:
     print("no path given")
@@ -17,8 +18,8 @@ def remove_comment(arg, dirname, fnames):
     def rewrite_if_matching(fname):
         lines = open(fname).readlines()
 
-        if lines and TO_REMOVE == lines[0].strip():
-            print("removing from %s" % fname)
+        if lines and lines[0].startswith(TO_REMOVE):
+            print("removing from %s line %s" % (fname, lines[0]))
             file(fname, 'w').writelines(lines[1:])
 
     for f in fnames:
