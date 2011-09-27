@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/USSR/bin/env python2
 
 '''
 Taken from http://blog.prashanthellina.com/2007/11/14/generating-call-graphs-for-understanding-and-refactoring-python-code/
+
 generates call graph of given python code file
 in dot format input for graphviz.
 
@@ -39,26 +40,36 @@ def get_atom_name(atom):
     if first_child_code != token.NAME: return None
     return first_child[1]
 
+# FIXME: this function has too many returns None    
 def get_fn_call_data(ast_list):
-    if len(ast_list) < 3: return None
+    if len(ast_list) < 3:
+        return None
+
     first_child, second_child = ast_list[1:3]
     first_child_code = first_child[0]
-    if first_child_code != symbol.atom: return None
+    if first_child_code != symbol.atom:
+        return None
+
     fn_name = get_atom_name(first_child)
 
     second_child_code = second_child[0]
     if second_child_code != symbol.trailer: return None
     
-    if len(second_child) < 3: return None
+    if len(second_child) < 3:
+        return None
+
     if second_child[1][0] == token.LPAR and second_child[-1][0] == token.RPAR:
         return fn_name
-    else: return None
+    else:
+        return None
 
 def find_fn_call(ast_list, calls):
     code = ast_list[0]
     if code == symbol.power:
         fn_name = get_fn_call_data(ast_list)
-        if fn_name != None and getattr(__builtins__, fn_name, None) == None: calls.add(fn_name) 
+        if (fn_name != None) and \
+            (getattr(__builtins__, fn_name, None) == None):
+            calls.add(fn_name) 
    
     for item in ast_list[1:]:
         if isinstance(item, list):
