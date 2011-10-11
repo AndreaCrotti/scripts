@@ -1,5 +1,3 @@
-#!/usr/bin/env python2
-
 """
 Build all the PSI eggs with develop or bdist_egg depending on the case
 """
@@ -27,7 +25,7 @@ def analyzer(option):
     eggs = glob(path.join(PSI_PATH, '*'))
     if option == 'list':
         print(str(eggs))
-        return None
+        return
 
     # XXX: will keep going forever in case something also the second
     # time is not working
