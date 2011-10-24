@@ -9,10 +9,10 @@ from glob import glob
 # add also this to the third party as egg
 import argparse
 
-from pypiserver import core
+# from pypiserver import core
 # TODO: next step is to create a virtual environment (if not existing
 # already), otherwise just activate it
-from virtualenv import create_environment
+# from virtualenv import create_environment
 
 PSI_PATH = getenv("PSI_PATH")
 BASE_ENV_PATH = path.expanduser(path.join('~', '.virtualenvs'))
