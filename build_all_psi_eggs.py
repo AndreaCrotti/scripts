@@ -82,7 +82,9 @@ if __name__ == '__main__':
     if ns.build:
         option = 'bdist_egg -d %s' % EGG_DIR
     elif ns.develop:
-        option = 'develop --user'
+        # don't check for dependencies between them with the "-N"
+        # flag, but this check at some point
+        option = 'develop --user -N'
     else:
         print("only showing the given eggs")
         option = 'list'
