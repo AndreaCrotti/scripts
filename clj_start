@@ -2,8 +2,10 @@
 # use autocompletion with clojure with rlwrap
 
 breakchars="(){}[],^%$#@\"\";:''|\\"
-CLOJURE_DIR=/opt/local/share/java/clojure/lib/
-CLOJURE_JAR="$CLOJURE_DIR"/clojure.jar
+
+CLOJURE_DIR=/usr/share/clojure
+
+CLOJURE_JAR=$CLOJURE_DIR/clojure.jar
 if [ $# -eq 0 ]; then 
     exec rlwrap --remember -c -b "$breakchars" \
         -f "$HOME"/.clj_completions \
