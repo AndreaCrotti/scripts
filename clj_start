@@ -3,6 +3,7 @@
 
 breakchars="(){}[],^%$#@\"\";:''|\\"
 CLOJURE_JAR=$CLOJURE_HOME/clojure.jar
+
 if [ $# -eq 0 ]; then 
     exec rlwrap --remember -c -b "$breakchars" \
         -f "$HOME"/.clj_completions \
