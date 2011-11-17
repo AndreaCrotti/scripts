@@ -1,20 +1,10 @@
-""" MODULE images2gif
+#!/usr/bin/env python2
 
-Provides a function (writeGif) to write animated gif from a series
-of PIL images or numpy arrays.
-
-This code is provided as is, and is free to use for all.
-
-Almar Klein (June 2009)
-
-- based on gifmaker (in the scripts folder of the source distribution of PIL)
-- based on gif file structure as provided by wikipedia
-
-"""
-
-import PIL
-from PIL import Image, ImageChops
+import argparse
+from glob import glob
+from PIL import Image
 from PIL.GifImagePlugin import getheader, getdata
+from os import path
 
 import numpy as np
 
@@ -197,7 +187,7 @@ def writeGif(filename, images, duration=0.1, loops=0, dither=1):
         fp.close()
     
     
-if __name__ == '__main__':
+def test_gif_creation():
     im = np.zeros((200,200), dtype=np.uint8)
     im[10:30,:] = 100
     im[:,80:120] = 255
@@ -205,4 +195,27 @@ if __name__ == '__main__':
     
     images = [im*1.0, im*0.8, im*0.6, im*0.4, im*0]
     writeGif('lala3.gif',images, duration=0.5, dither=0)
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='generate an animated gif')
     
+    parser.add_argument('path',
+                        help='path where pictures are stored')
+
+    parser.add_argument('ext',
+                        help='extension of the pictures')
+
+    parser.add_argument('-o', '--output',
+                        default='animate.gif')
+
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+    ns = parse_arguments()
+    to_glob = path.join(ns.path, "*.%s" % ns.ext)
+    files = glob(to_glob)
+
+    images = [Image.open(f) for f in files]
+    writeGif(ns.output, images, duration=0.5, dither=0)
