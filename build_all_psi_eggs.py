@@ -9,7 +9,8 @@ from glob import glob
 # add also this to the third party as egg
 import argparse
 
-PSI_PATH = getenv("PSI_PATH")
+PSI_PATH = path.expanduser("~/workspace/Psi")
+# PSI_PATH = getenv("PSI_PATH")
 BASE_ENV_PATH = path.expanduser(path.join('~', '.virtualenvs'))
 EGG_DIR = path.expanduser(path.join('~', '.psi_eggs'))
 # where is the server running
@@ -35,8 +36,9 @@ def analyzer(option):
         print(str(eggs))
         return
 
-    # XXX: will keep going forever in case something also the second
-    # time is not working
+    print("going to actually build all the eggs")
+    initialise()
+    # it's more simple to use GLOB and similar things
     cmd = "%s setup.py %s" % (PYTHON_CMD, option)
     while eggs:
         egg = eggs.pop()
@@ -44,6 +46,9 @@ def analyzer(option):
         if not path.exists(path.join(egg, "setup.py")):
             print("filtering out egg %s" % egg)
             continue
+
+        # check if you really need it and how
+        print("building egg %s" % egg)
         # change the directory before running
         p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, cwd=egg)
         out, err = p.communicate()
