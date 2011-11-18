@@ -63,10 +63,14 @@ def compose(files, output, background):
 
 #TODO: add the possibility to create different shapes
 def gen_rows_cols(tot):
-    from math import sqrt
+    from math import sqrt, ceil
     rows = int(sqrt(tot))
-    cols = (tot / rows) + 1
+    cols = int(ceil(float(tot) / rows))
     return rows, cols
+
+
+def test_rows_cols():
+    assert gen_rows_cols(12) == (3, 4)
 
 
 def parse_arguments():
