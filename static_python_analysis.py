@@ -1,6 +1,6 @@
-#!/USSR/bin/env python2
+#!/usr/bin/env python2
 
-'''
+"""
 Taken from http://blog.prashanthellina.com/2007/11/14/generating-call-graphs-for-understanding-and-refactoring-python-code/
 
 generates call graph of given python code file
@@ -11,7 +11,7 @@ limitations:
 * does not understand classes
 * algorithm is naive and may not statically find
   all cases
-'''
+"""
 
 import sys
 import parser
