@@ -1,7 +1,5 @@
 #!/usr/bin/env python2
 from os import path
-from sys import argv, exit
-import logging
 import argparse
 
 #TODO: remove empty newlines after this too

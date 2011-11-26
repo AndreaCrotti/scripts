@@ -8,25 +8,26 @@ from ast import parse, NodeVisitor
 class ImportVisitor(NodeVisitor):
 
     def __init__(self):
-        self.imported = []
+        self.imported = set()
         super(ImportVisitor, self).__init__()
 
     def __str__(self):
         return str(self.imported)        
 
+    #TODO: maybe I should make a difference between these two cases?
     def visit_Import(self, node):
         for n in node.names:
-            self.imported.append(n.name)
+            self.imported.add(n.name)
 
     def visit_ImportFrom(self, node):
-        self.imported.append(node.module)
+        self.imported.add(node.module)
 
 
 def show_imports(mod):
     at = parse(open(mod).read())
     v = ImportVisitor()
     v.visit(at)
-    print(v)
+    print v
 
 
 def parse_arguments():
