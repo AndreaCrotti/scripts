@@ -6,7 +6,7 @@ from os import path
 
 from PIL import Image
 
-MARGINS = (5,5,5,5)
+MARGINS = (5, 5, 5, 5)
 PADDING = 1
 PIC_SIZE = (300, 400)
 DEFAULT_FNAME = 'collage'
@@ -21,8 +21,8 @@ def make_contact_sheet(fnames, nrows, ncols, background):
     # Calculate the size of the output image, based on the
     #  photo thumb sizes, margins, and padding
     marl, marr, mart, marb = MARGINS
-    marw = marl+marr
-    marh = mart+ marb
+    marw = marl + marr
+    marh = mart +  marb
     photow, photoh = PIC_SIZE
 
     padw = (ncols - 1) * PADDING
@@ -35,18 +35,18 @@ def make_contact_sheet(fnames, nrows, ncols, background):
     # Insert each thumb:
     for irow in range(nrows):
         for icol in range(ncols):
-            left = marl + icol * (photow+PADDING)
+            left = marl + icol * (photow + PADDING)
             right = left + photow
-            upper = mart + irow * (photoh+PADDING)
+            upper = mart + irow * (photoh + PADDING)
             lower = upper + photoh
-            bbox = (left,upper,right,lower)
+            bbox = (left, upper, right, lower)
             #TODO: fix this ugly loop
             try:
                 img = imgs.pop(0)
             except:
                 break
             # this is the important piece
-            inew.paste(img,bbox)
+            inew.paste(img, bbox)
     return inew
 
 
@@ -87,7 +87,7 @@ def parse_arguments():
 
     parser.add_argument('-w', '--width',
                         help='max resolution width')
-    
+
     parser.add_argument('-o', '--output',
                         default='%s.%s' % (DEFAULT_FNAME, DEFAULT_EXT))
 
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     ns = parse_arguments()
     to_glob = path.join(ns.path, "*.%s" % ns.ext)
     files = glob(to_glob)
-    
+
     if ns.generate:
         from random import shuffle
         for n in range(int(ns.generate)):
