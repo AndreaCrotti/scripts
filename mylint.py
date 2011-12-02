@@ -1,9 +1,8 @@
+#!/usr/bin/env python2
 import argparse
 
 from pylint.lint import PyLinter
 from pylint.reporters import BaseReporter
-
-from pylint.interfaces import IReporter
 
 # possible levels
 CRITICAL = 3
@@ -28,6 +27,7 @@ error_level = {
         ('W0403', 'relative_import'),
         ('W0404', 'double_import'),
     ],
+
     ERROR: [
         ('E0104', 'return_outside_function'),
         ('E0105', 'yield_outside_function'),
@@ -40,6 +40,12 @@ error_level = {
 
     ]
 }
+
+def get_msg_ids(error_level):
+    for k, v in error_level.items():
+        for m, _ in v:
+            yield m
+
 
 class MyReporter(BaseReporter):
     def add_message(self, msg_id, location, msg):
@@ -58,4 +64,25 @@ class MyReporter(BaseReporter):
 def parse_arguments():
     parser = argparse.ArgumentParser(description='run pylint on the file')
 
+    parser.add_argument('module', nargs='+')
     return parser.parse_args()
+
+    # options = (('ignore',
+    #             {'type' : 'csv', 'metavar' : '<file>[,<file>...]',
+
+    #              'dest' : 'black_list', 'default' : ('CVS',),
+    #              'help' : 'Add files or directories to the blacklist. \
+
+
+
+def main():
+    linter = PyLinter()
+    # linter.msgs = get_msg_ids(error_level)
+    ns = parse_arguments()
+    for mod in ns.module:
+        print("module = %s" % mod)
+        print(linter.check(mod))
+
+
+if __name__ == '__main__':
+    main()
