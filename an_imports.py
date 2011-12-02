@@ -4,7 +4,6 @@ import argparse
 
 from ast import parse, NodeVisitor
 from os import path
-from pprint import pprint
 
 from psi.devsonly.walk import walk_py, walk_full_path_files
 
@@ -18,12 +17,10 @@ class ImportVisitor(NodeVisitor):
     def __str__(self):
         return '\n'.join(x for x in self.imported)
 
-    #TODO: maybe I should make a difference between these two cases?
     def visit_Import(self, node):
         for n in node.names:
             self.imported.add(n.name)
 
-    #TODO: store something more than simply the name of the module
     #that we are using
     def visit_ImportFrom(self, node):
         self.imported.add(node.module)
