@@ -13,8 +13,32 @@ WARNING = 1
 WARN = WARNING
 STYLE = 0
 
+# done until now:
+# - imports.py
+# - variables.py
+
 # associate every error we want to analyze with something
 error_level = {
+    WARNING: [
+        ('W0611', 'unused_imports'),
+        ('W0612', 'unused_variable'),
+        ('W0613', 'unused_argument'),
+        ('R0401', 'cyclic_import'),
+        ('W0401', 'star_import'),  #  this might be an error too
+        ('W0403', 'relative_import'),
+        ('W0404', 'double_import'),
+    ],
+    ERROR: [
+        ('E0104', 'return_outside_function'),
+        ('E0105', 'yield_outside_function'),
+        ('E0602', 'name_not_found'),
+        ('E0601', 'variable_before_assignment'),
+        ('W0410', 'future_not_first')
+    ],
+    # what could be some fatal?
+    FATAL: [
+
+    ]
 }
 
 class MyReporter(BaseReporter):
