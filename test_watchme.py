@@ -3,6 +3,8 @@ import sys
 import time
 import argparse
 
+from os import path, remove
+
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler
 
@@ -25,18 +27,30 @@ import logging
 
 
 class HandlePeskyPycFiles(LoggingEventHandler):
+    def _is_py_module(self, filename):
+        #TODO: check also if it's a filename somehow, but this file is
+        #already the old path, so we can't really check for path.isfile
+        return filename.endswith('.py')
+
+    def _check_and_delete_pesky(self, py_module):
+        assert not path.isfile(py_module)
+        print("checking pesky")
+        pyc_file = py_module + "c"
+        if path.isfile(pyc_file):
+            print("removing pesky file")
+            remove(pyc_file)
+
+    def on_deleted(self, event):
+        super(HandlePeskyPycFiles, self).on_deleted(event)
+        #XXX: slight repetition of things, but more flexible in this way
+        if self._is_py_module(event.src_path):
+            self._check_and_delete_pesky(event.src_path)
+
     # the other functions should be checked
     def on_moved(self, event):
         super(HandlePeskyPycFiles, self).on_moved(event)
-        if not event.is_directory:
-            # then it must be a file
-            if event.src_path.endswith('.py'):
-                print("moving a python file, must check for pyc")
-                # the check and removal for a pyc file can be done immediately
-                import pdb; pdb.set_trace()
-                print("file moved called %s " % event.src_path)
-            else:
-                print("file moved was not a pyc, go on")
+        if self._is_py_module(event.src_path):
+            self._check_and_delete_pesky(event.src_path)
 
 
 def parse_arguments():
