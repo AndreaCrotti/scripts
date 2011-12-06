@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 import sys
 import argparse
@@ -6,6 +6,8 @@ from os import path
 
 from pylint.interfaces import IReporter
 from pylint.reporters import BaseReporter
+from pylint.lint import Run
+
 from logilab.common.ureports import TextWriter
 
 
@@ -34,12 +36,25 @@ class OrgReporter(BaseReporter):
         TextWriter().format(layout, self.out)
 
 
-def pylint_cmdline(module):
-    msg_ids = get_msg_ids(error_level)
+def run_pylint(msg_ids, module, output):
     msgs = ','.join(msg_ids)
     to_disable = 'I,W,R,C,E'
     options = "-i y -rn -d %s -e %s %s" % (msgs, to_disable, module)
     options = options.split(' ')
-    print("running %s" % (str(options)))
-    # needs to pass the reporter object too
-    Run(options, reporter=OrgReporter())
+    Run(options, reporter=OrgReporter(output=output))
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='run pylint and convert the output to orgmode format')
+
+    parser.add_argument('-o', '--output')
+    parser.add_argument('module')
+    parser.add_argument('msg_id', nargs='+')
+
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+    ns = parse_arguments()
+    output = ns.output if ns.output else sys.stdout
+    run_pylint(ns.msg_id, ns.module, output)
