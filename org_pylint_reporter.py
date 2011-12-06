@@ -2,6 +2,7 @@
 
 import sys
 import argparse
+from os import path
 
 from pylint.interfaces import IReporter
 from pylint.reporters import BaseReporter
@@ -31,3 +32,14 @@ class OrgReporter(BaseReporter):
     def _display(self, layout):
         print >> self.out
         TextWriter().format(layout, self.out)
+
+
+def pylint_cmdline(module):
+    msg_ids = get_msg_ids(error_level)
+    msgs = ','.join(msg_ids)
+    to_disable = 'I,W,R,C,E'
+    options = "-i y -rn -d %s -e %s %s" % (msgs, to_disable, module)
+    options = options.split(' ')
+    print("running %s" % (str(options)))
+    # needs to pass the reporter object too
+    Run(options, reporter=OrgReporter())
