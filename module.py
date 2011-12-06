@@ -1,8 +1,13 @@
 #!/usr/bin/env python2
 
+import argparse
 from ast import parse
 from os import walk, path
 from sys import argv
+
+
+def simple(module_path):
+    return open(module_path).read()
 
 
 class Module(object):
@@ -33,15 +38,30 @@ class ContentDirectory(object):
         return self.content[module_path]
 
 
-def show_content(dirpath, cd):
+def show_content(dirpath, cd, cached):
     for root, _, files in walk(dirpath):
         for f in files:
             if f.endswith('.py'):
                 full = path.join(root, f)
-                cd[full].get_text()
+                if cached:
+                    cd[full].get_text()
+                else:
+                    simple(full)
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='test some caching')
+    parser.add_argument('-c', '--cached',
+                        action='store_true',
+                        help='cached')
+    parser.add_argument('dir')
+    parser.add_argument('-n', '--number', default=10)
+
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
     content_dir = ContentDirectory()
-    for i in range(int(argv[2])):
-        show_content(argv[1], content_dir)
+    ns = parse_arguments()
+    for i in range(int(ns.number)):
+        show_content(ns.dir, content_dir, ns.cached)
