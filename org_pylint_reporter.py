@@ -36,10 +36,14 @@ class OrgReporter(BaseReporter):
         TextWriter().format(layout, self.out)
 
 
-def run_pylint(msg_ids, module, output):
-    msgs = ','.join(msg_ids)
-    to_disable = 'I,W,R,C,E'
-    options = "-i y -rn -d %s -e %s %s" % (msgs, to_disable, module)
+def run_pylint(module, output, msg_ids=None):
+    if msg_ids:
+        to_disable = 'I,W,R,C,E'
+        enable_only = "-d %s -e %s" % (to_disable, ','.join(msg_ids))
+    else:
+        enable_only = ''
+
+    options = "-i y -rn %s %s" % (enable_only, module)
     options = options.split(' ')
     Run(options, reporter=OrgReporter(output=output))
 
@@ -49,7 +53,7 @@ def parse_arguments():
 
     parser.add_argument('-o', '--output')
     parser.add_argument('module')
-    parser.add_argument('msg_id', nargs='+')
+    parser.add_argument('msg_id', nargs='*')
 
     return parser.parse_args()
 
@@ -57,4 +61,4 @@ def parse_arguments():
 if __name__ == '__main__':
     ns = parse_arguments()
     output = ns.output if ns.output else sys.stdout
-    run_pylint(ns.msg_id, ns.module, output)
+    run_pylint(ns.module, output, ns.msg_id)
