@@ -5,7 +5,6 @@ from ast import parse
 from os import walk, path
 from sys import argv
 
-
 def simple(module_path):
     return open(module_path).read()
 
