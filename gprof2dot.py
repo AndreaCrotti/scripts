@@ -201,6 +201,32 @@ class Function(Object):
             self.calls[callee_id] = call
         return self.calls[callee_id]
 
+    _parenthesis_re = re.compile(r'\([^()]*\)')
+    _angles_re = re.compile(r'<[^<>]*>')
+    _const_re = re.compile(r'\s+const$')
+
+    def stripped_name(self):
+        """Remove extraneous information from C++ demangled function names."""
+
+        name = self.name
+
+        # Strip function parameters from name by recursively removing paired parenthesis
+        while True:
+            name, n = self._parenthesis_re.subn('', name)
+            if not n:
+                break
+
+        # Strip const qualifier
+        name = self._const_re.sub('', name)
+
+        # Strip template parameters from name by recursively removing paired angles
+        while True:
+            name, n = self._angles_re.subn('', name)
+            if not n:
+                break
+
+        return name
+
     # TODO: write utility functions
 
     def __repr__(self):
@@ -1078,7 +1104,11 @@ class CallgrindParser(LineParser):
 
         self.parse_key('version')
         self.parse_key('creator')
-        self.parse_part()
+        while self.parse_part():
+            pass
+        if not self.eof():
+            sys.stderr.write('warning: line %u: unexpected line\n' % self.line_no)
+            sys.stderr.write('%s\n' % self.lookahead())
 
         # compute derived data
         self.profile.validate()
@@ -1090,13 +1120,14 @@ class CallgrindParser(LineParser):
         return self.profile
 
     def parse_part(self):
+        if not self.parse_header_line():
+            return False
         while self.parse_header_line():
             pass
+        if not self.parse_body_line():
+            return False
         while self.parse_body_line():
             pass
-        if not self.eof() and False:
-            sys.stderr.write('warning: line %u: unexpected line\n' % self.line_no)
-            sys.stderr.write('%s\n' % self.lookahead())
         return True
 
     def parse_header_line(self):
@@ -1165,6 +1196,12 @@ class CallgrindParser(LineParser):
             return False
 
         function = self.get_function()
+
+        if calls is None:
+            # Unlike other aspects, call object (cob) is relative not to the
+            # last call object, but to the caller's object (ob), so update it
+            # when processing a functions cost line
+            self.positions['cob'] = self.positions['ob']
 
         values = line.split()
         assert len(values) <= self.num_positions + self.num_events
@@ -1331,6 +1368,8 @@ class CallgrindParser(LineParser):
             function = self.profile.functions[id]
         except KeyError:
             function = Function(id, name)
+            if module:
+                function.module = os.path.basename(module)
             function[SAMPLES] = 0
             function.called = 0
             self.profile.add_function(function)
@@ -1347,6 +1386,104 @@ class CallgrindParser(LineParser):
         filename = self.positions.get('cfi', '') 
         function = self.positions.get('cfn', '') 
         return self.make_function(module, filename, function)
+
+
+class PerfParser(LineParser):
+    """Parser for linux perf callgraph output.
+
+    It expects output generated with
+
+        perf record -g
+        perf script | gprof2dot.py --format=perf
+    """
+
+    def __init__(self, infile):
+        LineParser.__init__(self, infile)
+        self.profile = Profile()
+
+    def parse(self):
+        # read lookahead
+        self.readline()
+
+        profile = self.profile
+        profile[SAMPLES] = 0
+        while not self.eof():
+            self.parse_event()
+
+        # compute derived data
+        profile.validate()
+        profile.find_cycles()
+        profile.ratio(TIME_RATIO, SAMPLES)
+        profile.call_ratios(SAMPLES2)
+        profile.integrate(TOTAL_TIME_RATIO, TIME_RATIO)
+
+        return profile
+
+    def parse_event(self):
+        if self.eof():
+            return
+
+        line = self.consume()
+        assert line
+
+        callchain = self.parse_callchain()
+        assert callchain
+        if not callchain:
+            return
+
+        callee = callchain[0]
+        callee[SAMPLES] += 1
+        self.profile[SAMPLES] += 1
+
+        for caller in callchain[1:]:
+            try:
+                call = caller.calls[callee.id]
+            except KeyError:
+                call = Call(callee.id)
+                call[SAMPLES2] = 1
+                caller.add_call(call)
+            else:
+                call[SAMPLES2] += 1
+
+            callee = caller
+
+    def parse_callchain(self):
+        callchain = []
+        while self.lookahead():
+            function = self.parse_call()
+            if function is None:
+                break
+            callchain.append(function)
+        if self.lookahead() == '':
+            self.consume()
+        return callchain
+
+    call_re = re.compile(r'^\s+(?P<address>[0-9a-fA-F]+)\s+(?P<symbol>.*)\s+\((?P<module>[^)]*)\)$')
+
+    def parse_call(self):
+        line = self.consume()
+        mo = self.call_re.match(line)
+        assert mo
+        if not mo:
+            return None
+
+        function_name = mo.group('symbol')
+        if not function_name:
+            function_name = mo.group('address')
+
+        module = mo.group('module')
+
+        function_id = function_name + ':' + module
+
+        try:
+            function = self.profile.functions[function_id]
+        except KeyError:
+            function = Function(function_id, function_name)
+            function.module = os.path.basename(module)
+            function[SAMPLES] = 0
+            self.profile.add_function(function)
+
+        return function
 
 
 class OprofileParser(LineParser):
@@ -1946,6 +2083,8 @@ class SleepyParser(Parser):
 
         self.database = ZipFile(filename)
 
+        self.version_0_7 = 'Version 0.7 required' in self.database.namelist()
+
         self.symbols = {}
         self.calls = {}
 
@@ -1960,7 +2099,11 @@ class SleepyParser(Parser):
     )
 
     def parse_symbols(self):
-        lines = self.database.read('symbols.txt').splitlines()
+        if self.version_0_7:
+            symbols_txt = 'Symbols.txt'
+        else:
+            symbols_txt = 'symbols.txt'
+        lines = self.database.read(symbols_txt).splitlines()
         for line in lines:
             mo = self._symbol_re.match(line)
             if mo:
@@ -1979,10 +2122,14 @@ class SleepyParser(Parser):
                 self.symbols[symbol_id] = function
 
     def parse_callstacks(self):
-        lines = self.database.read("callstacks.txt").splitlines()
+        if self.version_0_7:
+            callstacks_txt = 'Callstacks.txt'
+        else:
+            callstacks_txt = 'callstacks.txt'
+        lines = self.database.read(callstacks_txt).splitlines()
         for line in lines:
             fields = line.split()
-            samples = int(fields[0])
+            samples = float(fields[0])
             callstack = fields[1:]
 
             callstack = [self.symbols[symbol_id] for symbol_id in callstack]
@@ -2414,8 +2561,28 @@ class DotWriter:
       http://www.graphviz.org/doc/info/lang.html
     """
 
+    strip = False
+    wrap = False
+
     def __init__(self, fp):
         self.fp = fp
+
+    def wrap_function_name(self, name):
+        """Split the function name on multiple lines."""
+
+        if len(name) > 32:
+            ratio = 2.0/3.0
+            height = max(int(len(name)/(1.0 - ratio) + 0.5), 1)
+            width = max(len(name)/height, 32)
+            # TODO: break lines in symbols
+            name = textwrap.fill(name, width, break_long_words=False)
+
+        # Take away spaces
+        name = name.replace(", ", ",")
+        name = name.replace("> >", ">>")
+        name = name.replace("> >", ">>") # catch consecutive
+
+        return name
 
     def graph(self, profile, theme):
         self.begin_graph()
@@ -2432,7 +2599,15 @@ class DotWriter:
                 labels.append(function.process)
             if function.module is not None:
                 labels.append(function.module)
-            labels.append(function.name)
+
+            if self.strip:
+                function_name = function.stripped_name()
+            else:
+                function_name = function.name
+            if self.wrap:
+                function_name = self.wrap_function_name(function_name)
+            labels.append(function_name)
+
             for event in TOTAL_TIME_RATIO, TIME_RATIO:
                 if event in function.events:
                     label = event.format(function[event])
@@ -2589,7 +2764,7 @@ class Main:
             help="eliminate edges below this threshold [default: %default]")
         parser.add_option(
             '-f', '--format',
-            type="choice", choices=('prof', 'callgrind', 'oprofile', 'hprof', 'sysprof', 'pstats', 'shark', 'sleepy', 'aqtime', 'xperf'),
+            type="choice", choices=('prof', 'callgrind', 'perf', 'oprofile', 'hprof', 'sysprof', 'pstats', 'shark', 'sleepy', 'aqtime', 'xperf'),
             dest="format", default="prof",
             help="profile format: prof, callgrind, oprofile, hprof, sysprof, shark, sleepy, aqtime, pstats, or xperf [default: %default]")
         parser.add_option(
@@ -2638,6 +2813,12 @@ class Main:
             else:
                 fp = open(self.args[0], 'rt')
             parser = CallgrindParser(fp)
+        elif self.options.format == 'perf':
+            if not self.args:
+                fp = sys.stdin
+            else:
+                fp = open(self.args[0], 'rt')
+            parser = PerfParser(fp)
         elif self.options.format == 'oprofile':
             if not self.args:
                 fp = sys.stdin
@@ -2694,67 +2875,13 @@ class Main:
 
         self.write_graph()
 
-    _parenthesis_re = re.compile(r'\([^()]*\)')
-    _angles_re = re.compile(r'<[^<>]*>')
-    _const_re = re.compile(r'\s+const$')
-
-    def strip_function_name(self, name):
-        """Remove extraneous information from C++ demangled function names."""
-
-        # Strip function parameters from name by recursively removing paired parenthesis
-        while True:
-            name, n = self._parenthesis_re.subn('', name)
-            if not n:
-                break
-
-        # Strip const qualifier
-        name = self._const_re.sub('', name)
-
-        # Strip template parameters from name by recursively removing paired angles
-        while True:
-            name, n = self._angles_re.subn('', name)
-            if not n:
-                break
-
-        return name
-
-    def wrap_function_name(self, name):
-        """Split the function name on multiple lines."""
-
-        if len(name) > 32:
-            ratio = 2.0/3.0
-            height = max(int(len(name)/(1.0 - ratio) + 0.5), 1)
-            width = max(len(name)/height, 32)
-            # TODO: break lines in symbols
-            name = textwrap.fill(name, width, break_long_words=False)
-
-        # Take away spaces
-        name = name.replace(", ", ",")
-        name = name.replace("> >", ">>")
-        name = name.replace("> >", ">>") # catch consecutive
-
-        return name
-
-    def compress_function_name(self, name):
-        """Compress function name according to the user preferences."""
-
-        if self.options.strip:
-            name = self.strip_function_name(name)
-
-        if self.options.wrap:
-            name = self.wrap_function_name(name)
-
-        # TODO: merge functions with same resulting name
-
-        return name
-
     def write_graph(self):
         dot = DotWriter(self.output)
+        dot.strip = self.options.strip
+        dot.wrap = self.options.wrap
+
         profile = self.profile
         profile.prune(self.options.node_thres/100.0, self.options.edge_thres/100.0)
-
-        for function in profile.functions.itervalues():
-            function.name = self.compress_function_name(function.name)
 
         dot.graph(profile, self.theme)
 
