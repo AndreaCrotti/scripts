@@ -1,0 +1,6 @@
+VE_PY="ve/bin/python"
+
+if [ -f $VE_PY ]
+then echo "Using python from $VE_PY" && $VE_PY $*
+else echo "Using default python" && python $*
+fi
