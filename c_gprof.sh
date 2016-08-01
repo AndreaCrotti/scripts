@@ -27,3 +27,4 @@ fi
 ./$@
 gprof $PROG | $GPROF2DOT -e0 -n0 | dot -T$TYPE -o $OUT
 echo "Result graph is in $OUT"
+
