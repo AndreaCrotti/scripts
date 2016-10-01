@@ -5,7 +5,8 @@ LOGFILE="logfile.log"
 echo "generating logfile to $LOGFILE"
 git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames > $LOGFILE
 
-OPS="abs-churn age author-churn authors communication coupling entity-churn entity-effort entity-ownership fragmentation identity main-dev main-dev-by-revs messages refactoring-main-dev revisions soc summary"
+# messages requires an extra argument
+OPS="abs-churn age author-churn authors communication coupling entity-churn entity-effort entity-ownership fragmentation identity main-dev main-dev-by-revs refactoring-main-dev revisions soc"
 
 for op in $OPS; do
     echo "running $op"
