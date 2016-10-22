@@ -10,7 +10,7 @@ shift
 
 # change those variables as you prefer
 STATS="output.pstats"
-TYPE=pdf
+TYPE=png
 OUT=output.$TYPE
 
 if uname | grep -i 'darwin'
