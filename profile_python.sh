@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# use it with ./profile_test.sh manage.py test -v app.tests.TestClass for example
+# use it with 'profile_python.sh yourname manage.py test -v app.tests.TestClass' for example
 PROFILE_NAME=$1
 
 shift
