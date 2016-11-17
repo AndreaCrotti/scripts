@@ -2,8 +2,7 @@
 
 # clean exited containers, dangling images and unwanted volumes
 
-docker rm -v $(docker ps -a -q -f status=exited)
-docker rm -v $(docker ps -a -q -f status=dead)
+docker rm -v $(docker ps -a -q -f status=exited -f status=dead)
 
 docker rmi $(docker images -f "dangling=true" -q)
 
