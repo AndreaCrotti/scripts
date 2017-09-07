@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -x
 FNAME=$1
 if [ ! -f $FNAME ]
 then
