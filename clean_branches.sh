@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-for branch in $(git branch --merged master | grep -v master)
+BASE=$1
+
+for branch in $(git branch --merged $BASE | grep -v $BASE)
 do
     git branch -d $branch
 done
