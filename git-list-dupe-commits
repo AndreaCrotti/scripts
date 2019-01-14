@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+test ! -z "$1" && TARGET_COMMIT_SHA="$1" || TARGET_COMMIT_SHA="HEAD"
+
+TARGET_COMMIT_PATCHID=$(
+    git show --patch-with-raw "$TARGET_COMMIT_SHA" |
+	git patch-id |
+	cut -d' ' -f1
+                     )
+MATCHING_COMMIT_SHAS=$(
+    for c in $(git rev-list --all); do
+	git show --patch-with-raw "$c" |
+	    git patch-id
+    done |
+	fgrep "$TARGET_COMMIT_PATCHID" |
+	cut -d' ' -f2
+                    )
+
+echo "$MATCHING_COMMIT_SHAS"
+
+# Local Variables:
+# mode: sh
+# End:
