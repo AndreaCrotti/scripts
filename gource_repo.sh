@@ -7,7 +7,7 @@ OUT=$2
 
 gource $REPO \
     -s .03 \
-    -1280x720 \
+    --800x600 \
     --auto-skip-seconds .1 \
     --multi-sampling \
     --stop-at-end \
@@ -22,21 +22,3 @@ gource $REPO \
     --output-ppm-stream - \
     --output-framerate 30 \
     | ffmpeg -y -r 30 -f image2pipe -vcodec ppm -i - -b 65536K $OUT.mp4
-
-
-# gource $REPO \
-#        --800x600 \
-#        --max-files 99999 \
-#        --disable-progress \
-#        --stop-at-end \
-#        -s 0.25 \
-#        --user-scale 2 \
-#        --highlight-all-users \
-#        --output-ppm-stream - | ffmpeg -y \
-#                                        -r 60 \
-#                                        -f image2pipe \
-#                                        -vcodec ppm \
-#                                        -i -- -vcodec libx264 \
-#                                        $OUT.mp4
-
-#                                        # -b 3000K \
