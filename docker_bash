@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+bash && cd ~/src/work/docker/platform-scripts/ && source includes.bash
